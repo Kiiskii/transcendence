@@ -1,3 +1,5 @@
+import "./i18n";
+
 import "./index.css";
 
 import React from "react";

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
+
+import { useTranslation } from "react-i18next";
+
 import { api } from "../api/client";
 
 export default function Home() {
+  const { t } = useTranslation();
+
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -13,8 +18,15 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <h1 className="text-accent text-3xl font-bold">Forage Marketplace</h1>
-      <p className="text-muted mt-2">Backend status: {status}</p>
+      
+      <h1 className="text-accent text-3xl font-bold">
+      {t("home.title")}
+      </h1>
+
+      <p className="text-muted mt-2">
+        {t("home.backendStatus")}: {status}
+      </p>
+
     </div>
   );
 }

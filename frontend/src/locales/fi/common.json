@@ -1,0 +1,7 @@
+{
+    "home": {
+      "title": "Forage Marketplace",
+      "backendStatus": "Palvelimen tila",
+      "backendError": "Palvelimeen ei saada yhteyttä"
+    }
+  }
