@@ -18,7 +18,7 @@ func TestFollowRejectsYourself(t *testing.T) {
 	if !errors.As(err, &validation) {
 		t.Fatalf("err = %v, want *ValidationError", err)
 	}
-	if validation.Message != "you cannot follow yourself" {
-		t.Errorf("message = %q, want %q", validation.Message, "you cannot follow yourself")
+	if validation.Message != "You cannot follow yourself" {
+		t.Errorf("message = %q, want %q", validation.Message, "You cannot follow yourself")
 	}
 }

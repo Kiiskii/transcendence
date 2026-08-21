@@ -10,13 +10,13 @@ import (
 func (h *Handler) CreateAPIKey(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	var input dtos.CreateAPIKeyInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -34,7 +34,7 @@ func (h *Handler) CreateAPIKey(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetAPIKeys(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -50,13 +50,13 @@ func (h *Handler) GetAPIKeys(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) RevokeAPIKey(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid api key id")
+		respondWithError(w, http.StatusBadRequest, "Invalid API key id")
 		return
 	}
 

@@ -12,13 +12,13 @@ import (
 func (h *Handler) StartConversation(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	var input dtos.StartConversationInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -34,7 +34,7 @@ func (h *Handler) StartConversation(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetConversations(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -50,13 +50,13 @@ func (h *Handler) GetConversations(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetConversation(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid conversation id")
+		respondWithError(w, http.StatusBadRequest, "Invalid conversation id")
 		return
 	}
 
@@ -74,13 +74,13 @@ func (h *Handler) DeclineConversation(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) decideConversation(w http.ResponseWriter, r *http.Request, accept bool) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid conversation id")
+		respondWithError(w, http.StatusBadRequest, "Invalid conversation id")
 		return
 	}
 
@@ -100,25 +100,25 @@ func (h *Handler) decideConversation(w http.ResponseWriter, r *http.Request, acc
 func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid conversation id")
+		respondWithError(w, http.StatusBadRequest, "Invalid conversation id")
 		return
 	}
 
 	afterID, err := parseOptionalUUID(r.URL.Query().Get("after"))
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "after must be a uuid")
+		respondWithError(w, http.StatusBadRequest, "After must be a UUID")
 		return
 	}
 
 	limit, err := parseOptionalInt32(r.URL.Query().Get("limit"))
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "limit must be a positive integer")
+		respondWithError(w, http.StatusBadRequest, "Limit must be a positive integer")
 		return
 	}
 
@@ -134,19 +134,19 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid conversation id")
+		respondWithError(w, http.StatusBadRequest, "Invalid conversation id")
 		return
 	}
 
 	var input dtos.SendMessageInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -162,13 +162,13 @@ func (h *Handler) SendMessage(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) MarkConversationRead(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid conversation id")
+		respondWithError(w, http.StatusBadRequest, "Invalid conversation id")
 		return
 	}
 

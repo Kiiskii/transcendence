@@ -45,8 +45,9 @@ info:
     ## Errors
 
     Errors from the endpoints below are all the same shape:
-    `{"error": "..."}`. Messages on 4xx describe what the caller did wrong;
-    5xx always returns a fixed "something went wrong" and the detail goes to
+    `{"error": "..."}`. Messages on 4xx describe what the caller did wrong
+    and are written for display - sentence case, no trailing full stop. 5xx
+    always returns a fixed "Something went wrong" and the detail goes to
     the server log, tagged with the `X-Request-ID` returned on every response.
 
     Two cases bypass that envelope, because they never reach a handler: an
@@ -122,9 +123,11 @@ components:
         error:
           type: string
           description: |
-            Safe to show a user on 4xx. On 5xx this is always
-            "something went wrong" — the cause is in the server log.
-          examples: ["listing not found"]
+            Safe to show a user on 4xx, and written for display: sentence case,
+            no trailing full stop. Render it as-is rather than transforming it.
+            On 5xx this is always "Something went wrong" — the cause is in the
+            server log, tagged with the `X-Request-ID` on the response.
+          examples: ["Listing not found"]
         details:
           type: object
           # "any key, string value" - the YAML spelling of map[string]string.
@@ -1699,7 +1702,7 @@ paths:
         "204":
           description: Followed. No body.
         "400":
-          description: The id is not a uuid, or it is your own - you cannot follow yourself.
+          description: The id is not a UUID, or it is your own - you cannot follow yourself.
           content:
             application/json:
               schema:
@@ -1726,7 +1729,7 @@ paths:
         "204":
           description: Unfollowed. No body.
         "400":
-          description: The id is not a uuid.
+          description: The id is not a UUID.
           content:
             application/json:
               schema:
@@ -1766,7 +1769,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ChatUser"
         "400":
-          description: The id is not a uuid.
+          description: The id is not a UUID.
           content:
             application/json:
               schema:
@@ -1808,7 +1811,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ChatUser"
         "400":
-          description: The id is not a uuid.
+          description: The id is not a UUID.
           content:
             application/json:
               schema:
@@ -1938,7 +1941,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PublicProfile"
         "400":
-          description: The id is not a uuid.
+          description: The id is not a UUID.
           content:
             application/json:
               schema:
@@ -2699,7 +2702,7 @@ paths:
         "204":
           description: Revoked. No body.
         "400":
-          description: The id is not a uuid.
+          description: The id is not a UUID.
           content:
             application/json:
               schema:

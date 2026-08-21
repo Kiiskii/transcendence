@@ -85,8 +85,8 @@ func TestSignupRejectsADuplicateEmail(t *testing.T) {
 	if !errors.As(err, &conflict) {
 		t.Fatalf("err = %v, want *ConflictError", err)
 	}
-	if conflict.Message != "email already in use" {
-		t.Errorf("message = %q, want %q", conflict.Message, "email already in use")
+	if conflict.Message != "Email already in use" {
+		t.Errorf("message = %q, want %q", conflict.Message, "Email already in use")
 	}
 }
 
@@ -134,8 +134,8 @@ func TestSignupRejectsADuplicateUsername(t *testing.T) {
 	if !errors.As(err, &conflict) {
 		t.Fatalf("err = %v, want *ConflictError", err)
 	}
-	if conflict.Message != "username already taken" {
-		t.Errorf("message = %q, want %q", conflict.Message, "username already taken")
+	if conflict.Message != "Username already taken" {
+		t.Errorf("message = %q, want %q", conflict.Message, "Username already taken")
 	}
 	if after := countUsers(t, db); after != before {
 		t.Errorf("users = %d, want %d - the rejected signup left a row behind", after, before)
@@ -163,8 +163,8 @@ func TestSignupRejectsACaseVariantUsername(t *testing.T) {
 	if !errors.As(err, &conflict) {
 		t.Fatalf("err = %v, want *ConflictError", err)
 	}
-	if conflict.Message != "username already taken" {
-		t.Errorf("message = %q, want %q", conflict.Message, "username already taken")
+	if conflict.Message != "Username already taken" {
+		t.Errorf("message = %q, want %q", conflict.Message, "Username already taken")
 	}
 	if after := countUsers(t, db); after != before {
 		t.Errorf("users = %d, want %d", after, before)
@@ -189,8 +189,8 @@ func TestSignupRejectsACaseVariantEmail(t *testing.T) {
 	if !errors.As(err, &conflict) {
 		t.Fatalf("err = %v, want *ConflictError", err)
 	}
-	if conflict.Message != "email already in use" {
-		t.Errorf("message = %q, want %q", conflict.Message, "email already in use")
+	if conflict.Message != "Email already in use" {
+		t.Errorf("message = %q, want %q", conflict.Message, "Email already in use")
 	}
 }
 
@@ -244,8 +244,8 @@ func TestTheEmailIndexIsTheBackstop(t *testing.T) {
 	if !errors.As(duplicateUserError(err), &conflict) {
 		t.Fatalf("err = %v, want it mapped to *ConflictError - unmapped is a 500", err)
 	}
-	if conflict.Message != "email already in use" {
-		t.Errorf("message = %q, want %q", conflict.Message, "email already in use")
+	if conflict.Message != "Email already in use" {
+		t.Errorf("message = %q, want %q", conflict.Message, "Email already in use")
 	}
 }
 
@@ -306,7 +306,7 @@ func TestSignupRejectsADuplicateOfBothFields(t *testing.T) {
 	if !errors.As(err, &conflict) {
 		t.Fatalf("err = %v, want *ConflictError", err)
 	}
-	if conflict.Message != "email already in use" && conflict.Message != "username already taken" {
+	if conflict.Message != "Email already in use" && conflict.Message != "Username already taken" {
 		t.Errorf("message = %q, want one of the two duplicate messages", conflict.Message)
 	}
 	if after := countUsers(t, db); after != before {

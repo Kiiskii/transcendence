@@ -29,7 +29,7 @@ func TestResolveSort(t *testing.T) {
 		}
 	}
 
-	wantMessage := "sort must be one of: " + strings.Join(database.SortOptions(), ", ")
+	wantMessage := "Sort must be one of: " + strings.Join(database.SortOptions(), ", ")
 	for _, key := range []string{"cheapest", "PRICE_ASC", "listings.price ASC"} {
 		_, err := resolveSort(key)
 

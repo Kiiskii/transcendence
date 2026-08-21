@@ -10,7 +10,7 @@ import (
 func (h *Handler) GetOwnProfile(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -26,7 +26,7 @@ func (h *Handler) GetOwnProfile(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UpdateOwnProfile(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -36,7 +36,7 @@ func (h *Handler) UpdateOwnProfile(w http.ResponseWriter, r *http.Request) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *Handler) UpdateOwnProfile(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetPublicProfile(w http.ResponseWriter, r *http.Request) {
 	userID, err := parseUUIDParam(r, "id")
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid user id")
+		respondWithError(w, http.StatusBadRequest, "Invalid user id")
 		return
 	}
 

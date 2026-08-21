@@ -103,7 +103,7 @@ func RateLimitByKey(perMinute int) func(http.Handler) http.Handler {
 
 			if !allowed {
 				w.Header().Set("Retry-After", strconv.Itoa(int(retryAfter.Seconds())))
-				writeAuthzError(w, http.StatusTooManyRequests, "rate limit exceeded")
+				writeAuthzError(w, http.StatusTooManyRequests, "Rate limit exceeded")
 				return
 			}
 
@@ -161,7 +161,7 @@ func TouchAPIKey(store keyToucher, interval time.Duration) func(http.Handler) ht
 
 			if tracker.shouldTouch(id, time.Now()) {
 				if err := tracker.store.TouchKey(r.Context(), id); err != nil {
-					slog.Error("could not record api key usage", "key_id", id, "error", err)
+					slog.Error("could not record API key usage", "key_id", id, "error", err)
 				}
 			}
 

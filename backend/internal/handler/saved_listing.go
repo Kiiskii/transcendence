@@ -11,13 +11,13 @@ import (
 func (h *Handler) SaveListing(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	listingID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid listing id")
+		respondWithError(w, http.StatusBadRequest, "Invalid listing id")
 		return
 	}
 
@@ -32,13 +32,13 @@ func (h *Handler) SaveListing(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UnsaveListing(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	listingID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid listing id")
+		respondWithError(w, http.StatusBadRequest, "Invalid listing id")
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *Handler) UnsaveListing(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetSavedListings(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 

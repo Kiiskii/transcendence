@@ -13,7 +13,7 @@ var errInvalidNumber = errors.New("invalid number")
 func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -29,18 +29,18 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	var input dtos.UpdateSettingsInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if input.ShowOnlineStatus == nil {
-		respondWithError(w, http.StatusBadRequest, "no settings to update")
+		respondWithError(w, http.StatusBadRequest, "No settings to update")
 		return
 	}
 
@@ -56,7 +56,7 @@ func (h *Handler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetUnreadCount(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 

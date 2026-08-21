@@ -37,10 +37,10 @@ func TestRequireRole(t *testing.T) {
 		wantBody      string
 	}{
 		{"an admin passes through", true, fakeRoleStore{role: auth.RoleAdmin}, http.StatusOK, true, ""},
-		{"an ordinary user is refused", true, fakeRoleStore{role: auth.RoleUser}, http.StatusForbidden, false, "forbidden"},
-		{"a deleted account is refused, not a 500", true, fakeRoleStore{err: sql.ErrNoRows}, http.StatusForbidden, false, "forbidden"},
-		{"a database failure is a 500", true, fakeRoleStore{err: errors.New("pq: connection refused")}, http.StatusInternalServerError, false, "internal server error"},
-		{"nobody authenticated", false, fakeRoleStore{role: auth.RoleAdmin}, http.StatusUnauthorized, false, "authentication required"},
+		{"an ordinary user is refused", true, fakeRoleStore{role: auth.RoleUser}, http.StatusForbidden, false, "Forbidden"},
+		{"a deleted account is refused, not a 500", true, fakeRoleStore{err: sql.ErrNoRows}, http.StatusForbidden, false, "Forbidden"},
+		{"a database failure is a 500", true, fakeRoleStore{err: errors.New("pq: connection refused")}, http.StatusInternalServerError, false, "Internal server error"},
+		{"nobody authenticated", false, fakeRoleStore{role: auth.RoleAdmin}, http.StatusUnauthorized, false, "Authentication required"},
 	}
 
 	for _, tt := range tests {

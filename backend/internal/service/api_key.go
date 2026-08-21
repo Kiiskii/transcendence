@@ -38,10 +38,10 @@ type IssuedKey struct {
 func (s *APIKeyService) Create(ctx context.Context, userID uuid.UUID, name string) (IssuedKey, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
-		return IssuedKey{}, &ValidationError{Message: "name is required"}
+		return IssuedKey{}, &ValidationError{Message: "Name is required"}
 	}
 	if len([]rune(name)) > maxKeyNameLength {
-		return IssuedKey{}, &ValidationError{Message: "name must be 60 characters or fewer"}
+		return IssuedKey{}, &ValidationError{Message: "Name must be 60 characters or fewer"}
 	}
 
 	raw := KeyPrefix + randomHex()
@@ -70,7 +70,7 @@ func (s *APIKeyService) Revoke(ctx context.Context, userID uuid.UUID, id uuid.UU
 		return err
 	}
 	if rows == 0 {
-		return &NotFoundError{Message: "api key not found"}
+		return &NotFoundError{Message: "API key not found"}
 	}
 	return nil
 }
@@ -91,7 +91,7 @@ func (s *APIKeyService) Authenticate(ctx context.Context, raw string) (uuid.UUID
 	return row.ID, auth.User{ID: row.UserID, Name: row.Username, Role: row.Role}, nil
 }
 
-var ErrKeyNotUsable = errors.New("api key is not usable")
+var ErrKeyNotUsable = errors.New("API key is not usable")
 
 func hashKey(raw string) string {
 	sum := sha256.Sum256([]byte(raw))

@@ -22,7 +22,7 @@ func getUserID(r *http.Request) (uuid.UUID, error) {
 	return user.ID, nil
 }
 
-// parseUUIDParam reads a named URL segment as a uuid. Every id in the API is
+// parseUUIDParam reads a named URL segment as a UUID. Every id in the API is
 // one, so this replaced the int32 and uuid variants that used to sit alongside
 // each other.
 func parseUUIDParam(r *http.Request, name string) (uuid.UUID, error) {
@@ -34,7 +34,7 @@ func parseIDParam(r *http.Request) (uuid.UUID, error) {
 	return parseUUIDParam(r, "id")
 }
 
-// parseOptionalUUID reads a uuid from a query string, treating an empty value
+// parseOptionalUUID reads a UUID from a query string, treating an empty value
 // as absent. Cursors use it: no "after" means the first page.
 func parseOptionalUUID(raw string) (uuid.UUID, error) {
 	if raw == "" {
@@ -81,7 +81,7 @@ func respondWithServiceError(w http.ResponseWriter, r *http.Request, err error) 
 			"path", r.URL.Path,
 			"error", err)
 
-		respondWithError(w, status, "something went wrong")
+		respondWithError(w, status, "Something went wrong")
 		return
 	}
 

@@ -124,16 +124,16 @@ func (s *Service) Login(ctx context.Context, input dtos.LoginRequest) (LoginResu
 	input.Email = strings.TrimSpace(input.Email)
 
 	if input.Email == "" || input.Password == "" {
-		return LoginResult{}, &ValidationError{Message: "email and password are required"}
+		return LoginResult{}, &ValidationError{Message: "Email and password are required"}
 	}
 
 	user, err := s.db.GetUserByEmail(ctx, input.Email)
 	if err != nil {
-		return LoginResult{}, &AuthError{Message: "invalid email or password"}
+		return LoginResult{}, &AuthError{Message: "Invalid email or password"}
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		return LoginResult{}, &AuthError{Message: "invalid email or password"}
+		return LoginResult{}, &AuthError{Message: "Invalid email or password"}
 	}
 
 	accessToken, err := s.jwt.IssueAccessToken(user)
@@ -161,8 +161,8 @@ const (
 )
 
 const (
-	emailTakenMessage    = "email already in use"
-	usernameTakenMessage = "username already taken"
+	emailTakenMessage    = "Email already in use"
+	usernameTakenMessage = "Username already taken"
 )
 
 func normalizeSignupInput(in dtos.CreateUserRequest) dtos.CreateUserRequest {
@@ -173,20 +173,20 @@ func normalizeSignupInput(in dtos.CreateUserRequest) dtos.CreateUserRequest {
 
 func validateSignupInput(input dtos.CreateUserRequest) error {
 	if input.Username == "" {
-		return &ValidationError{Message: "username is required"}
+		return &ValidationError{Message: "Username is required"}
 	}
 	if utf8.RuneCountInString(input.Username) > maxUsernameLength {
-		return &ValidationError{Message: tooLong("username", maxUsernameLength)}
+		return &ValidationError{Message: tooLong("Username", maxUsernameLength)}
 	}
 	if input.Email == "" {
-		return &ValidationError{Message: "email is required"}
+		return &ValidationError{Message: "Email is required"}
 	}
 	if utf8.RuneCountInString(input.Email) > maxEmailLength {
-		return &ValidationError{Message: tooLong("email", maxEmailLength)}
+		return &ValidationError{Message: tooLong("Email", maxEmailLength)}
 	}
 	if len(input.Password) < minPasswordLength {
 		return &ValidationError{
-			Message: fmt.Sprintf("password must be at least %d bytes", minPasswordLength),
+			Message: fmt.Sprintf("Password must be at least %d bytes", minPasswordLength),
 		}
 	}
 	if len(input.Password) > maxPasswordLength {
@@ -200,7 +200,7 @@ func tooLong(field string, limit int) string {
 }
 
 func passwordTooLong(limit int) string {
-	return fmt.Sprintf("password must be %d bytes or fewer", limit)
+	return fmt.Sprintf("Password must be %d bytes or fewer", limit)
 }
 
 const (

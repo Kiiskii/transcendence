@@ -18,9 +18,9 @@ func TestServiceErrorPassesTypedMessagesThrough(t *testing.T) {
 		err        error
 		wantStatus int
 	}{
-		{"validation", &service.ValidationError{Message: "price must be greater than 0"}, http.StatusBadRequest},
-		{"not found", &service.NotFoundError{Message: "listing not found"}, http.StatusNotFound},
-		{"forbidden", &service.ForbiddenError{Message: "you do not own this listing"}, http.StatusForbidden},
+		{"validation", &service.ValidationError{Message: "Price must be greater than 0"}, http.StatusBadRequest},
+		{"not found", &service.NotFoundError{Message: "Listing not found"}, http.StatusNotFound},
+		{"forbidden", &service.ForbiddenError{Message: "You do not own this listing"}, http.StatusForbidden},
 		{"conflict", &service.ConflictError{Message: "listing has orders"}, http.StatusConflict},
 	}
 
@@ -59,7 +59,7 @@ func TestServiceErrorHidesUnexpectedDetail(t *testing.T) {
 			t.Errorf("response leaked %q: %s", leaked, body)
 		}
 	}
-	if got := decodeError(t, rec); got != "something went wrong" {
+	if got := decodeError(t, rec); got != "Something went wrong" {
 		t.Errorf("message = %q, want the fixed string", got)
 	}
 }
@@ -86,9 +86,9 @@ func TestServiceErrorMapsAuthErrors(t *testing.T) {
 		wantStatus int
 		wantMsg    string
 	}{
-		{"bad credentials", &auth.AuthError{Message: "invalid email or password"}, http.StatusUnauthorized, "invalid email or password"},
-		{"auth validation", &auth.ValidationError{Message: "email is required"}, http.StatusBadRequest, "email is required"},
-		{"duplicate email", &auth.ConflictError{Message: "email already in use"}, http.StatusConflict, "email already in use"},
+		{"bad credentials", &auth.AuthError{Message: "Invalid email or password"}, http.StatusUnauthorized, "Invalid email or password"},
+		{"auth validation", &auth.ValidationError{Message: "Email is required"}, http.StatusBadRequest, "Email is required"},
+		{"duplicate email", &auth.ConflictError{Message: "Email already in use"}, http.StatusConflict, "Email already in use"},
 	}
 
 	for _, tt := range tests {
@@ -119,7 +119,7 @@ func TestRespondWithJSONFailsSafely(t *testing.T) {
 	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("content-type = %q, want application/json", ct)
 	}
-	if got := decodeError(t, rec); got != "something went wrong" {
+	if got := decodeError(t, rec); got != "Something went wrong" {
 		t.Errorf("body = %q, want a parseable error object", got)
 	}
 }

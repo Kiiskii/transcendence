@@ -28,16 +28,16 @@ func NewListingService(db *database.DB, files fileStore) *ListingService {
 
 func validateListingInput(title, category, unit string, price float64, quantity int32) error {
 	if title == "" || len(title) > 100 {
-		return &ValidationError{Message: "title is required and must be under 100 characters"}
+		return &ValidationError{Message: "Title is required and must be under 100 characters"}
 	}
 	if category == "" {
-		return &ValidationError{Message: "category is required"}
+		return &ValidationError{Message: "Category is required"}
 	}
 	if unit == "" {
-		return &ValidationError{Message: "unit is required"}
+		return &ValidationError{Message: "Unit is required"}
 	}
 	if price <= 0 {
-		return &ValidationError{Message: "price must be greater than 0"}
+		return &ValidationError{Message: "Price must be greater than 0"}
 	}
 	if quantity <= 0 {
 		return &ValidationError{Message: "Quantity must be greater than 0"}
@@ -65,7 +65,7 @@ func (s *ListingService) CreateListing(ctx context.Context, sellerID uuid.UUID, 
 func (s *ListingService) GetListing(ctx context.Context, id uuid.UUID) (database.Listing, error) {
 	listing, err := s.db.GetListing(ctx, id)
 	if err != nil {
-		return database.Listing{}, &NotFoundError{Message: "listing not found"}
+		return database.Listing{}, &NotFoundError{Message: "Listing not found"}
 	}
 	return listing, nil
 }
@@ -95,17 +95,17 @@ func (s *ListingService) UpdateListing(ctx context.Context, userID uuid.UUID, li
 	existing, err := qtx.GetListingForUpdate(ctx, listingID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Listing{}, &NotFoundError{Message: "listing not found"}
+			return database.Listing{}, &NotFoundError{Message: "Listing not found"}
 		}
 		return database.Listing{}, err
 	}
 
 	if existing.SellerID != userID {
-		return database.Listing{}, &ForbiddenError{Message: "you do not own this listing"}
+		return database.Listing{}, &ForbiddenError{Message: "You do not own this listing"}
 	}
 
 	if existing.Quantity == 0 {
-		return database.Listing{}, &ConflictError{Message: "listing is sold out and can no longer be edited; create new listing"}
+		return database.Listing{}, &ConflictError{Message: "Listing is sold out and can no longer be edited; create new listing"}
 	}
 
 	updated, err := qtx.UpdateListing(ctx, database.UpdateListingParams{
@@ -145,12 +145,12 @@ func (s *ListingService) DeleteListing(ctx context.Context, userID uuid.UUID, li
 	existing, err := qtx.GetListingForUpdate(ctx, listingID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &NotFoundError{Message: "listing not found"}
+			return &NotFoundError{Message: "Listing not found"}
 		}
 		return err
 	}
 	if existing.SellerID != userID {
-		return &ForbiddenError{Message: "you do not own this listing"}
+		return &ForbiddenError{Message: "You do not own this listing"}
 	}
 
 	orderCount, err := qtx.CountOrdersForListing(ctx, listingID)
@@ -158,7 +158,7 @@ func (s *ListingService) DeleteListing(ctx context.Context, userID uuid.UUID, li
 		return err
 	}
 	if orderCount > 0 {
-		return &ConflictError{Message: "this listing has orders and cannot be deleted; its order history has to be kept"}
+		return &ConflictError{Message: "This listing has orders and cannot be deleted; its order history has to be kept"}
 	}
 
 	filenames, err := qtx.DeleteImagesForListing(ctx, listingID)
@@ -197,7 +197,7 @@ func resolveSort(sortKey string) (string, error) {
 	}
 	if !database.IsValidSort(sortKey) {
 		return "", &ValidationError{
-			Message: "sort must be one of: " + strings.Join(database.SortOptions(), ", "),
+			Message: "Sort must be one of: " + strings.Join(database.SortOptions(), ", "),
 		}
 	}
 	return sortKey, nil
@@ -206,10 +206,10 @@ func resolveSort(sortKey string) (string, error) {
 func validateSearchText(values ...string) error {
 	for _, value := range values {
 		if !utf8.ValidString(value) || strings.ContainsRune(value, 0) {
-			return &ValidationError{Message: "search text must be valid UTF-8 without null bytes"}
+			return &ValidationError{Message: "Search text must be valid UTF-8 without null bytes"}
 		}
 		if utf8.RuneCountInString(value) > maxSearchTextLength {
-			return &ValidationError{Message: "search text is too long"}
+			return &ValidationError{Message: "Search text is too long"}
 		}
 	}
 	return nil
@@ -224,7 +224,7 @@ func (s *ListingService) SearchListings(ctx context.Context, q dtos.ListingSearc
 	if q.Page != "" {
 		p, err := strconv.Atoi(q.Page)
 		if err != nil || p < 1 || p > math.MaxInt32 {
-			return dtos.PaginatedListings{}, &ValidationError{Message: "page must be a positive integer"}
+			return dtos.PaginatedListings{}, &ValidationError{Message: "Page must be a positive integer"}
 		}
 		page = p
 	}
@@ -233,7 +233,7 @@ func (s *ListingService) SearchListings(ctx context.Context, q dtos.ListingSearc
 	if q.Limit != "" {
 		l, err := strconv.Atoi(q.Limit)
 		if err != nil || l < 1 {
-			return dtos.PaginatedListings{}, &ValidationError{Message: "limit must be a positive integer"}
+			return dtos.PaginatedListings{}, &ValidationError{Message: "Limit must be a positive integer"}
 		}
 		limit = l
 	}
@@ -247,7 +247,7 @@ func (s *ListingService) SearchListings(ctx context.Context, q dtos.ListingSearc
 	if q.MinPrice != "" {
 		v, err := strconv.ParseFloat(q.MinPrice, 64)
 		if err != nil || v < 0 || math.IsNaN(v) || math.IsInf(v, 0) {
-			return dtos.PaginatedListings{}, &ValidationError{Message: "min_price must be a non-negative number"}
+			return dtos.PaginatedListings{}, &ValidationError{Message: "Min price must be a non-negative number"}
 		}
 		minVal = v
 		minPrice = sql.NullString{String: strconv.FormatFloat(v, 'f', 2, 64), Valid: true}
@@ -255,13 +255,13 @@ func (s *ListingService) SearchListings(ctx context.Context, q dtos.ListingSearc
 	if q.MaxPrice != "" {
 		v, err := strconv.ParseFloat(q.MaxPrice, 64)
 		if err != nil || v < 0 || math.IsNaN(v) || math.IsInf(v, 0) {
-			return dtos.PaginatedListings{}, &ValidationError{Message: "max_price must be a non-negative number"}
+			return dtos.PaginatedListings{}, &ValidationError{Message: "Max price must be a non-negative number"}
 		}
 		maxVal = v
 		maxPrice = sql.NullString{String: strconv.FormatFloat(v, 'f', 2, 64), Valid: true}
 	}
 	if minPrice.Valid && maxPrice.Valid && minVal > maxVal {
-		return dtos.PaginatedListings{}, &ValidationError{Message: "min_price must not exceed max_price"}
+		return dtos.PaginatedListings{}, &ValidationError{Message: "Min price must not exceed max_price"}
 	}
 
 	sortKey, err := resolveSort(q.Sort)
@@ -271,7 +271,7 @@ func (s *ListingService) SearchListings(ctx context.Context, q dtos.ListingSearc
 
 	offset := (page - 1) * limit
 	if offset < 0 || offset > math.MaxInt32 {
-		return dtos.PaginatedListings{}, &ValidationError{Message: "page is too large"}
+		return dtos.PaginatedListings{}, &ValidationError{Message: "Page is too large"}
 	}
 
 	params := database.SearchListingsParams{

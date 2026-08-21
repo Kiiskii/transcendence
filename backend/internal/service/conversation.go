@@ -38,7 +38,7 @@ func NewConversationService(db *database.DB) *ConversationService {
 
 func checkParticipant(c database.Conversation, userID uuid.UUID) error {
 	if c.BuyerID != userID && c.SellerID != userID {
-		return &NotFoundError{Message: "conversation not found"}
+		return &NotFoundError{Message: "Conversation not found"}
 	}
 	return nil
 }
@@ -50,10 +50,10 @@ func checkCanDecide(c database.Conversation, userID uuid.UUID) error {
 	}
 
 	if c.SellerID != userID {
-		return &ForbiddenError{Message: "only the seller can answer a chat request"}
+		return &ForbiddenError{Message: "Only the seller can answer a chat request"}
 	}
 	if c.Status != StatusPending {
-		return &ConflictError{Message: "this request has already been answered"}
+		return &ConflictError{Message: "This request has already been answered"}
 	}
 	return nil
 }
@@ -68,19 +68,19 @@ func checkCanSend(c database.Conversation, userID uuid.UUID) error {
 	case StatusAccepted:
 		return nil
 	case StatusPending:
-		return &ConflictError{Message: "the seller has not accepted this chat request yet"}
+		return &ConflictError{Message: "The seller has not accepted this chat request yet"}
 	default:
-		return &ConflictError{Message: "this chat request was declined"}
+		return &ConflictError{Message: "This chat request was declined"}
 	}
 }
 
 func validateMessageBody(body string) (string, error) {
 	trimmed := strings.TrimSpace(body)
 	if trimmed == "" {
-		return "", &ValidationError{Message: "message cannot be empty"}
+		return "", &ValidationError{Message: "Message cannot be empty"}
 	}
 	if utf8.RuneCountInString(trimmed) > maxMessageLength {
-		return "", &ValidationError{Message: "message is too long"}
+		return "", &ValidationError{Message: "Message is too long"}
 	}
 	return trimmed, nil
 }
@@ -122,14 +122,14 @@ func (s *ConversationService) StartConversation(
 	listing, err := qtx.GetListing(ctx, listingID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Conversation{}, database.Message{}, &NotFoundError{Message: "listing not found"}
+			return database.Conversation{}, database.Message{}, &NotFoundError{Message: "Listing not found"}
 		}
 		return database.Conversation{}, database.Message{}, err
 	}
 
 	if listing.SellerID == buyerID {
 		return database.Conversation{}, database.Message{}, &ValidationError{
-			Message: "you cannot start a chat about your own listing",
+			Message: "You cannot start a chat about your own listing",
 		}
 	}
 
@@ -143,7 +143,7 @@ func (s *ConversationService) StartConversation(
 	if err != nil {
 		if isUniqueViolation(err, "conversations_listing_buyer_uq") {
 			return database.Conversation{}, database.Message{}, &ConflictError{
-				Message: "you have already contacted this seller about this listing",
+				Message: "You have already contacted this seller about this listing",
 			}
 		}
 		return database.Conversation{}, database.Message{}, err
@@ -188,7 +188,7 @@ func (s *ConversationService) decide(
 	conv, err := qtx.GetConversationForUpdate(ctx, conversationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Conversation{}, &NotFoundError{Message: "conversation not found"}
+			return database.Conversation{}, &NotFoundError{Message: "Conversation not found"}
 		}
 		return database.Conversation{}, err
 	}
@@ -248,7 +248,7 @@ func (s *ConversationService) SendMessage(
 	conv, err := qtx.GetConversationForUpdate(ctx, conversationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Message{}, &NotFoundError{Message: "conversation not found"}
+			return database.Message{}, &NotFoundError{Message: "Conversation not found"}
 		}
 		return database.Message{}, err
 	}
@@ -286,7 +286,7 @@ func (s *ConversationService) GetConversation(ctx context.Context, userID uuid.U
 	conv, err := s.db.GetConversation(ctx, conversationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Conversation{}, &NotFoundError{Message: "conversation not found"}
+			return database.Conversation{}, &NotFoundError{Message: "Conversation not found"}
 		}
 		return database.Conversation{}, err
 	}

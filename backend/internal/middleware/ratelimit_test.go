@@ -139,7 +139,7 @@ func TestRateLimitHeadersAndStatus(t *testing.T) {
 	if err != nil || retry < 1 {
 		t.Errorf("Retry-After = %q, want a positive integer", rec.Header().Get("Retry-After"))
 	}
-	if body := rec.Body.String(); body != `{"error":"rate limit exceeded"}` {
+	if body := rec.Body.String(); body != `{"error":"Rate limit exceeded"}` {
 		t.Errorf("body = %s, want the usual error envelope", body)
 	}
 }

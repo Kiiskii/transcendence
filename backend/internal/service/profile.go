@@ -41,7 +41,7 @@ func (s *ProfileService) Get(ctx context.Context, userID uuid.UUID) (ProfileDeta
 	user, err := s.db.GetUser(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ProfileDetail{}, &NotFoundError{Message: "user not found"}
+			return ProfileDetail{}, &NotFoundError{Message: "User not found"}
 		}
 		return ProfileDetail{}, err
 	}
@@ -49,7 +49,7 @@ func (s *ProfileService) Get(ctx context.Context, userID uuid.UUID) (ProfileDeta
 	profile, err := s.db.GetProfile(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ProfileDetail{}, &NotFoundError{Message: "profile not found"}
+			return ProfileDetail{}, &NotFoundError{Message: "Profile not found"}
 		}
 		return ProfileDetail{}, err
 	}
@@ -82,7 +82,7 @@ func (s *ProfileService) Update(ctx context.Context, userID uuid.UUID, input dto
 	current, err := qtx.GetProfileForUpdate(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ProfileDetail{}, &NotFoundError{Message: "profile not found"}
+			return ProfileDetail{}, &NotFoundError{Message: "Profile not found"}
 		}
 		return ProfileDetail{}, err
 	}
@@ -171,13 +171,13 @@ func mergeDate(current sql.NullTime, in dtos.OptionalString) (sql.NullTime, erro
 
 	parsed, err := time.Parse(dtos.DateLayout, trimmed)
 	if err != nil {
-		return sql.NullTime{}, &ValidationError{Message: "date_of_birth must look like 2001-05-14"}
+		return sql.NullTime{}, &ValidationError{Message: "Date of birth must look like 2001-05-14"}
 	}
 	if parsed.After(time.Now()) {
-		return sql.NullTime{}, &ValidationError{Message: "date_of_birth cannot be in the future"}
+		return sql.NullTime{}, &ValidationError{Message: "Date of birth cannot be in the future"}
 	}
 	if parsed.Year() < earliestBirthYear {
-		return sql.NullTime{}, &ValidationError{Message: "date_of_birth is implausibly early"}
+		return sql.NullTime{}, &ValidationError{Message: "Date of birth is implausibly early"}
 	}
 	return sql.NullTime{Time: parsed, Valid: true}, nil
 }
@@ -188,11 +188,13 @@ func validateProfileInput(input dtos.UpdateProfileInput) error {
 		value dtos.OptionalString
 		max   int
 	}{
-		{"firstname", input.Firstname, maxNameLength},
-		{"lastname", input.Lastname, maxNameLength},
-		{"bio", input.Bio, maxBioLength},
-		{"phone_number", input.PhoneNumber, maxPhoneLength},
-		{"location", input.Location, maxLocationLength},
+		// Display names, not JSON field names: these are read by a person, so
+		// "Phone number is too long" rather than "phone_number is too long".
+		{"First name", input.Firstname, maxNameLength},
+		{"Last name", input.Lastname, maxNameLength},
+		{"Bio", input.Bio, maxBioLength},
+		{"Phone number", input.PhoneNumber, maxPhoneLength},
+		{"Location", input.Location, maxLocationLength},
 	}
 
 	for _, l := range limits {

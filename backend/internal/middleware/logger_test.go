@@ -21,7 +21,7 @@ func TestResponseWriterRecordsWhatWasSent(t *testing.T) {
 			name: "explicit status and body",
 			handler: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
-				_, _ = w.Write([]byte(`{"error":"listing not found"}`))
+				_, _ = w.Write([]byte(`{"error":"Listing not found"}`))
 			},
 			wantStatus: http.StatusNotFound,
 			wantSize:   29,

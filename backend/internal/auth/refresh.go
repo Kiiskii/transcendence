@@ -51,7 +51,7 @@ func (s *Service) IssueSession(ctx context.Context, q *database.Queries, userID 
 
 func (s *Service) RedeemSession(ctx context.Context, raw string) (LoginResult, error) {
 	if raw == "" {
-		return LoginResult{}, &AuthError{Message: "invalid refresh token"}
+		return LoginResult{}, &AuthError{Message: "Invalid refresh token"}
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -72,7 +72,7 @@ func (s *Service) RedeemSession(ctx context.Context, raw string) (LoginResult, e
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return LoginResult{}, &AuthError{Message: "invalid refresh token"}
+			return LoginResult{}, &AuthError{Message: "Invalid refresh token"}
 		}
 		return LoginResult{}, err
 	}

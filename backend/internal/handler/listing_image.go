@@ -22,13 +22,13 @@ const sniffLen = 512
 func (h *Handler) UploadListingImage(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	listingID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid listing id")
+		respondWithError(w, http.StatusBadRequest, "Invalid listing id")
 		return
 	}
 
@@ -37,7 +37,7 @@ func (h *Handler) UploadListingImage(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		if isTooLarge(err) {
-			respondWithError(w, http.StatusRequestEntityTooLarge, "image is too large")
+			respondWithError(w, http.StatusRequestEntityTooLarge, "Image is too large")
 			return
 		}
 		respondWithError(w, http.StatusBadRequest, `expected a multipart form with an "image" file field`)
@@ -49,17 +49,17 @@ func (h *Handler) UploadListingImage(w http.ResponseWriter, r *http.Request) {
 	n, err := io.ReadFull(file, head)
 	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) && !errors.Is(err, io.EOF) {
 		if isTooLarge(err) {
-			respondWithError(w, http.StatusRequestEntityTooLarge, "image is too large")
+			respondWithError(w, http.StatusRequestEntityTooLarge, "Image is too large")
 			return
 		}
-		respondWithError(w, http.StatusBadRequest, "could not read uploaded file")
+		respondWithError(w, http.StatusBadRequest, "Could not read uploaded file")
 		return
 	}
 	head = head[:n]
 
 	ext, ok := detectImageExt(head)
 	if !ok {
-		respondWithError(w, http.StatusUnsupportedMediaType, "only JPEG, PNG and WebP images are allowed")
+		respondWithError(w, http.StatusUnsupportedMediaType, "Only JPEG, PNG and WebP images are allowed")
 		return
 	}
 
@@ -68,7 +68,7 @@ func (h *Handler) UploadListingImage(w http.ResponseWriter, r *http.Request) {
 	img, err := h.ListingImage.AddImage(r.Context(), userID, listingID, full, ext)
 	if err != nil {
 		if isTooLarge(err) {
-			respondWithError(w, http.StatusRequestEntityTooLarge, "image is too large")
+			respondWithError(w, http.StatusRequestEntityTooLarge, "Image is too large")
 			return
 		}
 		respondWithServiceError(w, r, err)
@@ -81,7 +81,7 @@ func (h *Handler) UploadListingImage(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetListingImages(w http.ResponseWriter, r *http.Request) {
 	listingID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid listing id")
+		respondWithError(w, http.StatusBadRequest, "Invalid listing id")
 		return
 	}
 
@@ -96,19 +96,19 @@ func (h *Handler) GetListingImages(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DeleteListingImage(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	listingID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid listing id")
+		respondWithError(w, http.StatusBadRequest, "Invalid listing id")
 		return
 	}
 
 	imageID, err := parseUUIDParam(r, "imageID")
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid image id")
+		respondWithError(w, http.StatusBadRequest, "Invalid image id")
 		return
 	}
 

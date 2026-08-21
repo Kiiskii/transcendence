@@ -23,10 +23,10 @@ func NewOrderService(db *database.DB) *OrderService {
 
 func (s *OrderService) CreateOrder(ctx context.Context, buyerID uuid.UUID, input dtos.CreateOrderInput) (database.Order, error) {
 	if input.ListingID == uuid.Nil {
-		return database.Order{}, &ValidationError{Message: "listing_id is required"}
+		return database.Order{}, &ValidationError{Message: "Listing id is required"}
 	}
 	if input.Quantity <= 0 {
-		return database.Order{}, &ValidationError{Message: "quantity must be greater than 0"}
+		return database.Order{}, &ValidationError{Message: "Quantity must be greater than 0"}
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -44,16 +44,16 @@ func (s *OrderService) CreateOrder(ctx context.Context, buyerID uuid.UUID, input
 	listing, err := qtx.GetListingForUpdate(ctx, input.ListingID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Order{}, &NotFoundError{Message: "listing not found"}
+			return database.Order{}, &NotFoundError{Message: "Listing not found"}
 		}
 		return database.Order{}, err
 	}
 
 	if listing.SellerID == buyerID {
-		return database.Order{}, &ValidationError{Message: "you cannot order your own listing"}
+		return database.Order{}, &ValidationError{Message: "You cannot order your own listing"}
 	}
 	if listing.Quantity < input.Quantity {
-		return database.Order{}, &ConflictError{Message: "not enough stock available"}
+		return database.Order{}, &ConflictError{Message: "Not enough stock available"}
 	}
 
 	if _, err := qtx.DecrementListingQuantity(ctx, database.DecrementListingQuantityParams{
@@ -61,7 +61,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, buyerID uuid.UUID, input
 		Quantity: input.Quantity,
 	}); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Order{}, &ConflictError{Message: "not enough stock available"}
+			return database.Order{}, &ConflictError{Message: "Not enough stock available"}
 		}
 		return database.Order{}, err
 	}
@@ -77,7 +77,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, buyerID uuid.UUID, input
 	})
 	if err != nil {
 		if isForeignKeyViolation(err, buyerConstraint) {
-			return database.Order{}, &NotFoundError{Message: "user not found"}
+			return database.Order{}, &NotFoundError{Message: "User not found"}
 		}
 		return database.Order{}, err
 	}
@@ -96,10 +96,10 @@ func (s *OrderService) CreateOrder(ctx context.Context, buyerID uuid.UUID, input
 func (s *OrderService) GetOrder(ctx context.Context, userID uuid.UUID, orderID uuid.UUID) (database.Order, error) {
 	order, err := s.db.GetOrder(ctx, orderID)
 	if err != nil {
-		return database.Order{}, &NotFoundError{Message: "order not found"}
+		return database.Order{}, &NotFoundError{Message: "Order not found"}
 	}
 	if order.BuyerID != userID && order.SellerID != userID {
-		return database.Order{}, &ForbiddenError{Message: "you are not part of this order"}
+		return database.Order{}, &ForbiddenError{Message: "You are not part of this order"}
 	}
 	return order, nil
 }
@@ -197,7 +197,7 @@ func (s *OrderService) applyAction(ctx context.Context, userID uuid.UUID, orderI
 	order, err := qtx.GetOrderForUpdate(ctx, orderID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.Order{}, &NotFoundError{Message: "order not found"}
+			return database.Order{}, &NotFoundError{Message: "Order not found"}
 		}
 		return database.Order{}, err
 	}
@@ -207,7 +207,7 @@ func (s *OrderService) applyAction(ctx context.Context, userID uuid.UUID, orderI
 	}
 	if !slices.Contains(action.from, order.Status) {
 		return database.Order{}, &ConflictError{
-			Message: fmt.Sprintf("cannot %s an order that is %s", action.name, order.Status),
+			Message: fmt.Sprintf("Cannot %s an order that is %s", action.name, order.Status),
 		}
 	}
 
@@ -289,7 +289,7 @@ func recordEvent(
 		Note:       sql.NullString{String: note, Valid: note != ""},
 	})
 	if isForeignKeyViolation(err, actorConstraint) {
-		return &NotFoundError{Message: "user not found"}
+		return &NotFoundError{Message: "User not found"}
 	}
 	return err
 }
@@ -319,12 +319,12 @@ func markHandshake(ctx context.Context, qtx *database.Queries, order database.Or
 	switch action.mark {
 	case markSeller:
 		if order.SellerHandedOverAt.Valid {
-			return database.Order{}, &ConflictError{Message: "you have already marked this order as handed over"}
+			return database.Order{}, &ConflictError{Message: "You have already marked this order as handed over"}
 		}
 		return qtx.MarkOrderHandedOver(ctx, order.ID)
 	case markBuyer:
 		if order.BuyerReceivedAt.Valid {
-			return database.Order{}, &ConflictError{Message: "you have already confirmed receipt of this order"}
+			return database.Order{}, &ConflictError{Message: "You have already confirmed receipt of this order"}
 		}
 		return qtx.MarkOrderReceived(ctx, order.ID)
 	}
@@ -340,17 +340,17 @@ func checkOrderActor(order database.Order, userID uuid.UUID, action orderAction)
 	isSeller := order.SellerID == userID
 
 	if !isBuyer && !isSeller {
-		return &ForbiddenError{Message: "you are not part of this order"}
+		return &ForbiddenError{Message: "You are not part of this order"}
 	}
 
 	switch action.actor {
 	case actorSeller:
 		if !isSeller {
-			return &ForbiddenError{Message: "only the seller can " + action.name + " this order"}
+			return &ForbiddenError{Message: "Only the seller can " + action.name + " this order"}
 		}
 	case actorBuyer:
 		if !isBuyer {
-			return &ForbiddenError{Message: "only the buyer can " + action.name + " this order"}
+			return &ForbiddenError{Message: "Only the buyer can " + action.name + " this order"}
 		}
 	case actorEither:
 	}
@@ -362,7 +362,7 @@ func checkHandshakeLock(order database.Order, action orderAction) error {
 	if action.blockedAfterMark &&
 		(order.SellerHandedOverAt.Valid || order.BuyerReceivedAt.Valid) {
 		return &ConflictError{
-			Message: "cannot cancel an order once handover has started",
+			Message: "Cannot cancel an order once handover has started",
 		}
 	}
 	return nil

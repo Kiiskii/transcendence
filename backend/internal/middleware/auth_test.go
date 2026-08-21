@@ -70,7 +70,7 @@ func TestExpiredTokenIsDistinguishableFromAbsent(t *testing.T) {
 				t.Errorf("WWW-Authenticate = %q, expiry signalled = %v, want %v", header, got, tt.wantExpiry)
 			}
 
-			if body := strings.TrimSpace(rec.Body.String()); body != `{"error":"authentication required"}` {
+			if body := strings.TrimSpace(rec.Body.String()); body != `{"error":"Authentication required"}` {
 				t.Errorf("body = %s, want the unchanged generic 401", body)
 			}
 		})

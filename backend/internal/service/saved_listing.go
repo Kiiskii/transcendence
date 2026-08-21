@@ -22,7 +22,7 @@ func NewSavedListingService(db *database.Queries) *SavedListingService {
 func (s *SavedListingService) SaveListing(ctx context.Context, userID uuid.UUID, listingID uuid.UUID) error {
 	if _, err := s.db.GetListing(ctx, listingID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &NotFoundError{Message: "listing not found"}
+			return &NotFoundError{Message: "Listing not found"}
 		}
 		return err
 	}
@@ -43,7 +43,7 @@ func (s *SavedListingService) UnsaveListing(ctx context.Context, userID uuid.UUI
 		return err
 	}
 	if rows == 0 {
-		return &NotFoundError{Message: "listing was not saved"}
+		return &NotFoundError{Message: "Listing was not saved"}
 	}
 	return nil
 }

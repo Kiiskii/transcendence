@@ -38,8 +38,8 @@ func Authenticate(authService *auth.JwtService, keys keyStore) func(http.Handler
 				if presented := r.Header.Get(keyHeader); presented != "" && keys != nil {
 					id, user, err := keys.Authenticate(r.Context(), presented)
 					if err != nil {
-						slog.Warn("rejected api key", "path", sanitizeLog(r.URL.Path)) // #nosec G706 -- path sanitized by sanitizeLog
-						writeAuthzError(w, http.StatusUnauthorized, "invalid api key")
+						slog.Warn("rejected API key", "path", sanitizeLog(r.URL.Path)) // #nosec G706 -- path sanitized by sanitizeLog
+						writeAuthzError(w, http.StatusUnauthorized, "Invalid API key")
 						return
 					}
 
@@ -55,7 +55,7 @@ func Authenticate(authService *auth.JwtService, keys keyStore) func(http.Handler
 			}
 
 			if r.Header.Get(keyHeader) != "" {
-				slog.Debug("both a bearer token and an api key were sent; using the token")
+				slog.Debug("both a bearer token and an API key were sent; using the token")
 			}
 
 			claims, err := authService.VerifyAccessToken(tokenStr)
@@ -93,7 +93,7 @@ func Authenticate(authService *auth.JwtService, keys keyStore) func(http.Handler
 func SessionOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if _, viaKey := apiKeyID(r.Context()); viaKey {
-			writeAuthzError(w, http.StatusForbidden, "log in to manage api keys")
+			writeAuthzError(w, http.StatusForbidden, "Log in to manage API keys")
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -112,7 +112,7 @@ func RequiredAuth(next http.Handler) http.Handler {
 
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
-			_, _ = w.Write([]byte(`{"error":"authentication required"}`))
+			_, _ = w.Write([]byte(`{"error":"Authentication required"}`))
 			return
 		}
 		next.ServeHTTP(w, r)

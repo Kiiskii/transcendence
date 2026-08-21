@@ -21,7 +21,7 @@ func (s *UserService) Get(ctx context.Context, userID uuid.UUID) (database.User,
 	user, err := s.db.GetUser(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.User{}, &NotFoundError{Message: "user not found"}
+			return database.User{}, &NotFoundError{Message: "User not found"}
 		}
 		return database.User{}, err
 	}
@@ -35,7 +35,7 @@ func (s *UserService) SetShowOnlineStatus(ctx context.Context, userID uuid.UUID,
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.User{}, &NotFoundError{Message: "user not found"}
+			return database.User{}, &NotFoundError{Message: "User not found"}
 		}
 		return database.User{}, err
 	}

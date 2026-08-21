@@ -13,13 +13,13 @@ import (
 func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	var input dtos.CreateOrderInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request body")
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -36,13 +36,13 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetOrder(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid order id")
+		respondWithError(w, http.StatusBadRequest, "Invalid order id")
 		return
 	}
 
@@ -60,7 +60,7 @@ func (h *Handler) GetOrder(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -78,13 +78,13 @@ func (h *Handler) GetOrders(w http.ResponseWriter, r *http.Request) {
 func parseOrderRequest(w http.ResponseWriter, r *http.Request) (uuid.UUID, uuid.UUID, bool) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return uuid.Nil, uuid.Nil, false
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid order id")
+		respondWithError(w, http.StatusBadRequest, "Invalid order id")
 		return uuid.Nil, uuid.Nil, false
 	}
 
@@ -163,13 +163,13 @@ func (h *Handler) CancelOrder(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetOrderEvents(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	id, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid order id")
+		respondWithError(w, http.StatusBadRequest, "Invalid order id")
 		return
 	}
 

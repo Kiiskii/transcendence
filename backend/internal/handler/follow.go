@@ -9,13 +9,13 @@ import (
 func (h *Handler) FollowUser(w http.ResponseWriter, r *http.Request) {
 	followerID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	followeeID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid user id")
+		respondWithError(w, http.StatusBadRequest, "Invalid user id")
 		return
 	}
 
@@ -30,13 +30,13 @@ func (h *Handler) FollowUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	followerID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
 	followeeID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid user id")
+		respondWithError(w, http.StatusBadRequest, "Invalid user id")
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *Handler) UnfollowUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserID(r)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication required")
+		respondWithError(w, http.StatusUnauthorized, "Authentication required")
 		return
 	}
 
@@ -67,7 +67,7 @@ func (h *Handler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetUserFollowing(w http.ResponseWriter, r *http.Request) {
 	userID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid user id")
+		respondWithError(w, http.StatusBadRequest, "Invalid user id")
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *Handler) GetUserFollowing(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 	userID, err := parseIDParam(r)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid user id")
+		respondWithError(w, http.StatusBadRequest, "Invalid user id")
 		return
 	}
 

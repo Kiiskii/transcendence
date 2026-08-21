@@ -86,14 +86,14 @@ func TestValidateProfileInput(t *testing.T) {
 	}{
 		{"an empty patch is valid", dtos.UpdateProfileInput{}, ""},
 		{"firstname at the limit", dtos.UpdateProfileInput{Firstname: dtos.SetString(strings.Repeat("a", 150))}, ""},
-		{"firstname over the limit", dtos.UpdateProfileInput{Firstname: dtos.SetString(strings.Repeat("a", 151))}, "firstname is too long"},
-		{"lastname over the limit", dtos.UpdateProfileInput{Lastname: dtos.SetString(strings.Repeat("a", 151))}, "lastname is too long"},
-		{"bio over the limit", dtos.UpdateProfileInput{Bio: dtos.SetString(strings.Repeat("a", 1001))}, "bio is too long"},
-		{"phone over the limit", dtos.UpdateProfileInput{PhoneNumber: dtos.SetString(strings.Repeat("1", 16))}, "phone_number is too long"},
-		{"location over the limit", dtos.UpdateProfileInput{Location: dtos.SetString(strings.Repeat("a", 101))}, "location is too long"},
-		{"multi-byte location over the BYTE limit", dtos.UpdateProfileInput{Location: dtos.SetString(strings.Repeat("ä", 51))}, "location is too long"},
-		{"a null byte in bio", dtos.UpdateProfileInput{Bio: dtos.SetString("a\x00b")}, "bio must be valid UTF-8 without null bytes"},
-		{"a null byte in location", dtos.UpdateProfileInput{Location: dtos.SetString("Espoo\x00")}, "location must be valid UTF-8 without null bytes"},
+		{"firstname over the limit", dtos.UpdateProfileInput{Firstname: dtos.SetString(strings.Repeat("a", 151))}, "First name is too long"},
+		{"lastname over the limit", dtos.UpdateProfileInput{Lastname: dtos.SetString(strings.Repeat("a", 151))}, "Last name is too long"},
+		{"bio over the limit", dtos.UpdateProfileInput{Bio: dtos.SetString(strings.Repeat("a", 1001))}, "Bio is too long"},
+		{"phone over the limit", dtos.UpdateProfileInput{PhoneNumber: dtos.SetString(strings.Repeat("1", 16))}, "Phone number is too long"},
+		{"location over the limit", dtos.UpdateProfileInput{Location: dtos.SetString(strings.Repeat("a", 101))}, "Location is too long"},
+		{"multi-byte location over the BYTE limit", dtos.UpdateProfileInput{Location: dtos.SetString(strings.Repeat("ä", 51))}, "Location is too long"},
+		{"a null byte in bio", dtos.UpdateProfileInput{Bio: dtos.SetString("a\x00b")}, "Bio must be valid UTF-8 without null bytes"},
+		{"a null byte in location", dtos.UpdateProfileInput{Location: dtos.SetString("Espoo\x00")}, "Location must be valid UTF-8 without null bytes"},
 		{"padding does not count", dtos.UpdateProfileInput{Firstname: dtos.SetString("  " + strings.Repeat("a", 150) + "  ")}, ""},
 	}
 

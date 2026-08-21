@@ -37,12 +37,12 @@ func (s *ListingImageService) ownedListing(ctx context.Context, userID uuid.UUID
 	listing, err := s.db.GetListing(ctx, listingID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &NotFoundError{Message: "listing not found"}
+			return &NotFoundError{Message: "Listing not found"}
 		}
 		return err
 	}
 	if listing.SellerID != userID {
-		return &ForbiddenError{Message: "you do not own this listing"}
+		return &ForbiddenError{Message: "You do not own this listing"}
 	}
 	return nil
 }
@@ -65,7 +65,7 @@ func (s *ListingImageService) AddImage(
 	}
 	if count >= int64(s.maxPerListing) {
 		return database.ListingImage{}, &ConflictError{
-			Message: fmt.Sprintf("a listing can have at most %d images", s.maxPerListing),
+			Message: fmt.Sprintf("A listing can have at most %d images", s.maxPerListing),
 		}
 	}
 
@@ -107,7 +107,7 @@ func (s *ListingImageService) createImageRow(
 
 	if _, err := qtx.GetListingForUpdate(ctx, listingID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return database.ListingImage{}, &NotFoundError{Message: "listing not found"}
+			return database.ListingImage{}, &NotFoundError{Message: "Listing not found"}
 		}
 		return database.ListingImage{}, err
 	}
@@ -118,7 +118,7 @@ func (s *ListingImageService) createImageRow(
 	}
 	if count >= int64(s.maxPerListing) {
 		return database.ListingImage{}, &ConflictError{
-			Message: fmt.Sprintf("a listing can have at most %d images", s.maxPerListing),
+			Message: fmt.Sprintf("A listing can have at most %d images", s.maxPerListing),
 		}
 	}
 
@@ -179,7 +179,7 @@ func (s *ListingImageService) DeleteImage(ctx context.Context, userID uuid.UUID,
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &NotFoundError{Message: "image not found"}
+			return &NotFoundError{Message: "Image not found"}
 		}
 		return err
 	}

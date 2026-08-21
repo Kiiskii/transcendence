@@ -27,7 +27,7 @@ func NewFollowService(db *database.Queries) *FollowService {
 
 func (s *FollowService) Follow(ctx context.Context, followerID, followeeID uuid.UUID) error {
 	if followerID == followeeID {
-		return &ValidationError{Message: "you cannot follow yourself"}
+		return &ValidationError{Message: "You cannot follow yourself"}
 	}
 
 	err := s.db.FollowUser(ctx, database.FollowUserParams{
@@ -35,7 +35,7 @@ func (s *FollowService) Follow(ctx context.Context, followerID, followeeID uuid.
 		FolloweeID: followeeID,
 	})
 	if isForeignKeyViolation(err, followeeConstraint, followerConstraint) {
-		return &NotFoundError{Message: "user not found"}
+		return &NotFoundError{Message: "User not found"}
 	}
 	return err
 }
@@ -65,7 +65,7 @@ func (s *FollowService) ListFollowers(ctx context.Context, userID uuid.UUID) ([]
 func (s *FollowService) requireUser(ctx context.Context, userID uuid.UUID) error {
 	if _, err := s.db.GetUser(ctx, userID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &NotFoundError{Message: "user not found"}
+			return &NotFoundError{Message: "User not found"}
 		}
 		return err
 	}
