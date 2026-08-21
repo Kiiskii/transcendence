@@ -41,7 +41,11 @@ export function FormField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && (
+        <label className="text-muted" htmlFor={name}>
+          {label}
+        </label>
+      )}
       {isEditing ? (
         <>
           <input

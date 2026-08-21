@@ -1,31 +1,44 @@
-// Hard coded profile & settings page #24
+// Profile & settings page #24, now reading from GET /me/profile.
 //
-// Scope reminder (also on the issue): display name + bio are buildable now.
-// Avatar upload needs #14, password change needs auth (#32/#33), payout
-// account needs the payments module - render those as visible but disabled
-// controls so the page reads as finished without pretending to work.
+// Username and email are identity - the API offers no way to change them, so
+// they render read-only. Contact details and bio are editable in their
+// sections below (PATCH /me/profile). Password change has no backend endpoint
+// yet (#32/#33) and the preference toggles have no matching settings fields,
+// so they stay commented out below until then.
 //
-// Don't add a form library here: #47 hasn't picked one yet (React Hook Form +
-// Zod is the default suggestion), and whoever does #47 will retrofit this.
-//
-// N.B. This page is only viewable for the logged in user of the same profile
+// This page is only viewable for the logged-in user of the same profile.
 // To view another user's profile we have User.tsx
 import Avatar from "../components/objects/Avatar.tsx";
 import Button from "../components/objects/Button.tsx";
-import Toggle from "../components/objects/Toggle.tsx";
 import { ContactDetailsSection } from "../components/forms/ContactDetailsSection.tsx";
 import { ChangePasswordSection } from "../components/forms/ChangePasswordSection.tsx";
 import { BioSection } from "../components/forms/BioSection.tsx";
 import { useEffect, useMemo, useState } from "react";
 import { useModal } from "../providers/modalContext";
+import { useAuth } from "../hooks/useAuth";
+import { useOwnProfile } from "../api/profile";
+import { isApiError } from "../api/client";
+import { deriveInitials } from "../lib/initials";
 
 export default function Profile() {
-  {
-    /* These two states are just placeholders until we pull from backend with auth */
-  }
-  const [marketing, setMarketing] = useState(false);
-  const [hideDetails, setHideDetails] = useState(false);
   const { openModal } = useModal();
+  const { logout } = useAuth();
+
+  const { data: profile, isLoading, error } = useOwnProfile();
+
+  const signedOut = isApiError(error) && error.status === 401;
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      // Clears the session (and its cache) - the profile query then reruns,
+      // gets a 401, and the signed-out branch above takes over.
+      await logout();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   // The image the user picked in the "imageUpload" modal. There's no avatar
   // upload endpoint yet (#14), so this only lives in memory as a preview -
@@ -44,56 +57,85 @@ export default function Profile() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 px-4 py-8">
-      <h1 className="text-foreground text-3xl font-bold">Profile & Settings</h1>
-      {/* TODO: blocked by #109 nothing to load - hardcoded values for now. */}
-      <div className="flex flex-row gap-4">
-        <div>
-          <Avatar
-            size="lg"
-            initials="OR"
-            editable
-            imageUrl={avatarPreviewUrl}
-            onImageSelected={setAvatarFile}
-          />
+      <h1 className="text-foreground text-3xl font-bold">Profile &amp; Settings</h1>
+      {signedOut ? (
+        <div className="space-y-3">
+          <p className="text-muted text-sm">
+            You're signed out. Log in to see and edit your profile.
+          </p>
+          <Button variant="primary" onClick={() => openModal("login")}>
+            Log In
+          </Button>
         </div>
-        <div className="text-accent my-auto flex flex-col text-base">
-          <div className="font-bold">Oscar Rogers</div>
-          <div className="font-normal">oscarrogers@example.com</div>
-        </div>
-      </div>
-      <div className="space-y-1">
-        <h2 className="text-foreground text-lg font-bold">Contact Details</h2>
-        <ContactDetailsSection />
-      </div>
-      <div className="space-y-1">
-        <h2 className="text-foreground text-lg font-bold">Password</h2>
-        <ChangePasswordSection />
-      </div>
-      <div className="space-y-1">
-        <h2 className="text-foreground text-lg font-bold">Bio</h2>
-        <BioSection />
-      </div>
-      <div className="space-y-1">
-        <h2 className="text-foreground text-lg font-bold">Preferences</h2>
-        <div className="flex flex-row gap-6">
-          <Toggle
-            checked={marketing}
-            onChange={setMarketing}
-            label="Receive marketing emails from us"
-          />
-          <Toggle
-            checked={hideDetails}
-            onChange={setHideDetails}
-            label="Show only first name and initials to other users"
-          />
-        </div>
-      </div>
-      <div className="space-y-1">
-        <h2 className="text-foreground text-lg font-bold">Account Deletion</h2>
-        <Button variant="secondary" onClick={() => openModal("deleteAccount")}>
-          Delete Account
-        </Button>
-      </div>
+      ) : error ? (
+        <p className="text-berry-500 text-sm">
+          {isApiError(error) ? error.message : "Something went wrong. Please try again."}
+        </p>
+      ) : isLoading || !profile ? (
+        <p className="text-muted text-sm">Loading…</p>
+      ) : (
+        <>
+          <div className="flex flex-row gap-4">
+            <div>
+              <Avatar
+                size="lg"
+                // Username initial only, same rule as the header mini avatar.
+                initials={deriveInitials(profile.username)}
+                editable
+                imageUrl={avatarPreviewUrl}
+                onImageSelected={setAvatarFile}
+              />
+            </div>
+            <div className="text-accent my-auto flex flex-col text-base">
+              <div className="font-bold">{profile.username}</div>
+              <div className="font-normal">{profile.email}</div>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-foreground text-lg font-bold">Contact Details</h2>
+            <ContactDetailsSection />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-foreground text-lg font-bold">Password</h2>
+            <ChangePasswordSection />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-foreground text-lg font-bold">Bio</h2>
+            <BioSection />
+          </div>
+          {/* NOTE: No backend for these kind of preferences yet. Discussions were held about
+              having a setting for showing personal details, but maybe now handled by the friend
+              system, in which case following toggles could be removed/changed */}
+
+          {/* <div className="space-y-1"> */}
+          {/*   <h2 className="text-foreground text-lg font-bold">Preferences</h2> */}
+          {/*   <div className="flex flex-row gap-6"> */}
+          {/*     <Toggle */}
+          {/*       checked={marketing} */}
+          {/*       onChange={setMarketing} */}
+          {/*       label="Receive marketing emails from us" */}
+          {/*     /> */}
+          {/*     <Toggle */}
+          {/*       checked={hideDetails} */}
+          {/*       onChange={setHideDetails} */}
+          {/*       label="Show only first name and initials to other users" */}
+          {/*     /> */}
+          {/*   </div> */}
+          {/* </div> */}
+          <div className="space-y-1">
+            <h2 className="text-foreground text-lg font-bold">Account Management</h2>
+            <div className="flex flex-row gap-4">
+              <Button variant="primary" onClick={handleLogout} disabled={isLoggingOut}>
+                {isLoggingOut ? "Logging out…" : "Log Out"}
+              </Button>
+              {/* NOTE: Delete Account currently waiting for backend functionality to wire into */}
+              <Button variant="secondary" onClick={() => openModal("deleteAccount")}>
+                Delete Account
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

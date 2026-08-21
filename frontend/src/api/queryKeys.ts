@@ -34,6 +34,7 @@ export const keys = {
 
   me: {
     all: ["me"] as const,
+    profile: () => [...keys.me.all, "profile"] as const,
     settings: () => [...keys.me.all, "settings"] as const,
     unread: () => [...keys.me.all, "unread"] as const,
     saved: () => [...keys.me.all, "saved"] as const,

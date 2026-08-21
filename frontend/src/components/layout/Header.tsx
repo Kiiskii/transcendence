@@ -1,7 +1,8 @@
 // Link: normal navigation link (no "am I active?" info)
 // NavLink: a Link that knows if it points to the current page, so you can style the active one differently
-import { useState } from "react";
 import { useModal } from "../../providers/modalContext";
+import { useAuth } from "../../hooks/useAuth";
+import { deriveInitials } from "../../lib/initials";
 import { Link, NavLink } from "react-router-dom";
 import Avatar from "../objects/Avatar.tsx";
 
@@ -9,12 +10,12 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? "text-foreground" : "text-muted hover:text-foreground";
 
 export default function Header() {
-  const [isLoggedIn] = useState(false);
-  {
-    /* const [isLoggedIn, setLoggedIn] = useState(false); */
-    /* just a placeholder state until we pull from backend with auth */
-  }
+  const { user } = useAuth();
   const { openModal, openChat } = useModal();
+
+  // Names live on the profile, not the auth session - header works from the
+  // username alone and "?" covers signed-out visitors.
+  const initials = user ? deriveInitials(user.username) : "?";
 
   return (
     <header className="border-line bg-surface sticky top-0 z-10 border-b">
@@ -55,9 +56,9 @@ export default function Header() {
               <use href="/icons.svg#add-icon" />
             </svg>
           </Link>
-          {isLoggedIn ? (
+          {user ? (
             <Link to="/profile">
-              <Avatar size="sm" initials="OR" interactive />
+              <Avatar size="sm" initials={initials} interactive />
             </Link>
           ) : (
             <button type="button" onClick={() => openModal("login")}>

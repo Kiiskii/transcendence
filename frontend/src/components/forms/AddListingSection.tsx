@@ -58,7 +58,7 @@ export function AddListingSection() {
         <div className="space-y-2">
           <div className="space-y-1">
             <h2 className="text-foreground text-lg font-bold">Title</h2>
-            <FormField name="title" width="max-w-lg" validateOnChange />
+            <FormField name="title" width="max-w-md" validateOnChange />
           </div>
           <div className="space-y-1">
             <h2 className="text-foreground text-lg font-bold">Photos</h2>
@@ -80,7 +80,7 @@ export function AddListingSection() {
             <h2 className="text-foreground text-lg font-bold">Category</h2>
             <FormField
               name="category"
-              width="max-w-lg"
+              width="max-w-md"
               placeholder="e.g. 'Mushroom'"
               validateOnChange
             />
@@ -103,14 +103,14 @@ export function AddListingSection() {
                 width="max-w-sm"
                 validateOnChange
               />
-              <FormField
-                name="unit"
-                label="Unit"
-                placeholder="e.g. 'kg' or 'dl'"
-                width="max-w-sm"
-                validateOnChange
-              />
             </div>
+            <FormField
+              name="unit"
+              label="Unit"
+              placeholder="e.g. 'kg' or 'dl'"
+              width="max-w-md"
+              validateOnChange
+            />
           </div>
         </div>
         <Button variant="primary" type="submit" disabled={!form.formState.isValid}>

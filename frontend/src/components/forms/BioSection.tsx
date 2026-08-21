@@ -4,23 +4,43 @@ import { Form } from "./Form";
 import { FormTextArea } from "./FormTextArea";
 import { bioSchema, type BioFormValues } from "../../schemas/common";
 import Button from "../objects/Button.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useOwnProfile, useUpdateOwnProfile } from "../../api/profile";
+import { isApiError } from "../../api/client";
 
 export function BioSection() {
   const [isEditing, setEditing] = useState(false);
+  const { data: profile } = useOwnProfile();
+  const update = useUpdateOwnProfile();
 
   const form = useForm<BioFormValues>({
     resolver: zodResolver(bioSchema),
     mode: "onBlur",
-    // TODO: blocked by #109 Add hooks to fetch data from backend (or maybe local frontend e.g. from Profile.tsx?)
   });
+  const {
+    formState: { errors, isValid, isSubmitting },
+  } = form;
 
-  const handleSubmit = (data: BioFormValues) => {
-    console.log(data);
-    // TODO: blocked by #109 Save to API here
-    setEditing(false);
+  // Same seeding rule as ContactDetailsSection: fill when the profile lands,
+  // never while the user is editing.
+  useEffect(() => {
+    if (profile && !isEditing) {
+      form.reset({ bio: profile.bio ?? "" });
+    }
+  }, [profile, isEditing, form]);
+
+  const handleSubmit = async (data: BioFormValues) => {
+    form.clearErrors("root");
+    try {
+      // An emptied textarea sends "", which the backend treats as "clear".
+      await update.mutateAsync({ bio: data.bio });
+      setEditing(false);
+    } catch (err) {
+      form.setError("root", {
+        message: isApiError(err) ? err.message : "Something went wrong. Please try again.",
+      });
+    }
   };
-  // TODO: blocked by #109 Add hooks to save data to backend
 
   return (
     <Form form={form} onSubmit={handleSubmit} isEditing={isEditing}>
@@ -28,14 +48,13 @@ export function BioSection() {
         <div className="flex flex-row gap-4">
           <FormTextArea name="bio" validateOnChange />
         </div>
+        {errors.root?.message && <p className="text-berry-500 text-sm">{errors.root.message}</p>}
         <div className="flex flex-row gap-2">
           {isEditing ? (
             <>
-              <Button variant="primary" type="submit" disabled={!form.formState.isValid}>
-                {/* TODO: blocked by #109 Insert API here */}
-                Save
+              <Button variant="primary" type="submit" disabled={!isValid || isSubmitting}>
+                {isSubmitting ? "Saving…" : "Save"}
               </Button>
-              {/* TODO: blocked by #109 Using states, once forms are live we can make cancel only appear if user is in edit mode */}
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -47,17 +66,12 @@ export function BioSection() {
               </Button>
             </>
           ) : (
-            <Button variant="primary" onClick={() => setEditing(true)}>
+            <Button variant="primary" type="button" onClick={() => setEditing(true)}>
               Edit Text
             </Button>
           )}
         </div>
       </div>
-      {/* <button type="submit">Save</button> */}
-      {/* Also need to update this once hooks in place */}
-      {/* <button type="submit" disabled={isSubmitting}> */}
-      {/*   {isSubmitting? "Saving..." : "Save"} */}
-      {/* </button> */}
     </Form>
   );
 }

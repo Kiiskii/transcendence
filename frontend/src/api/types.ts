@@ -114,3 +114,67 @@ export interface UserSettings {
 export interface UnreadCount {
   unread_count: number;
 }
+
+// Auth Foundation additions
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+}
+
+export interface SignupInput {
+  username: string;
+  email: string;
+  password: string;
+}
+
+// Login is by email only - a username is a display name, not a credential.
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+// Returned by signup, login and refresh alike, so one code path can start a
+// session from any of them. The refresh token itself is never here: it travels
+// as an HttpOnly cookie.
+export interface AuthResponse {
+  access_token: string;
+  user: User;
+}
+
+// GET /me/profile. Unset fields arrive as null rather than absent, so forms
+// can render an empty input without deciding whether the key exists.
+export interface OwnProfile {
+  id: string;
+  username: string;
+  email: string;
+  firstname: string | null;
+  lastname: string | null;
+  bio: string | null;
+  phone_number: string | null;
+  date_of_birth: string | null;
+  location: string | null;
+}
+
+// PATCH /me/profile body. Each field has three states: key absent keeps the
+// current value, "" or null clears it, a value replaces it (trimmed). Username
+// and email are identity, not profile - they are not updatable here.
+export type ProfileUpdateInput = Partial<{
+  firstname: string | null;
+  lastname: string | null;
+  bio: string | null;
+  phone_number: string | null;
+  date_of_birth: string | null;
+  location: string | null;
+}>;
+
+// TODO: add an ApiError interface? e.g.
+// export interface ApiError {
+//   error: string;
+//   details?: string;
+// }
+
+// NOTE: there is no response envelope. endpoints return the payload directly
+// and signal success/failure through the HTTP status code. errors come back as
+// { error, details } - the interceptor is where this will be normalised

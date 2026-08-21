@@ -2,7 +2,7 @@ type ButtonProps = {
   children: React.ReactNode;
   onClick?: () => void; // Insert event handler here
   disabled?: boolean; // Start true or false
-  variant?: "primary" | "secondary"; // Variants for main buttons and secondaries
+  variant?: "primary" | "secondary" | "tertiary"; // Variants for main buttons, secondaries and tertiaries
   type?: "button" | "submit" | "reset"; // Native button type, defaults to "button"
 };
 
@@ -36,6 +36,7 @@ export default function Button({
       "bg-accent text-accent-contrast hover:bg-accent-hover active:bg-accent-active focus:ring-accent",
     secondary:
       "bg-soft text-soft-contrast border border-line hover:bg-soft-hover active:bg-soft-active focus:ring-accent",
+    tertiary: "text-accent-active hover:bg-surface-muter active:bg-surface-soft focus:ring-accent",
   };
 
   return (

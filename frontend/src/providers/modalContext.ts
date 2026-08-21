@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-export type DialogType = "login" | "imageUpload" | "deleteAccount" | null;
+export type DialogType = "login" | "register" | "imageUpload" | "deleteAccount" | null;
 
 // Extra data a caller can hand to a specific modal when opening it. Only
 // "imageUpload" needs one today - it hands back the file the user picked
