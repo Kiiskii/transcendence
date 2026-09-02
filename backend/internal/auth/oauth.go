@@ -36,7 +36,7 @@ func (s *Service) LoginWithIdentity(ctx context.Context, in OAuthLogin) (LoginRe
 		ProviderUserID: in.ProviderUserID,
 	})
 	if err == nil {
-		return s.sessionFor(ctx, s.db.Queries, found.User)
+		return s.sessionFor(ctx, found.User)
 	}
 	if !errors.Is(err, sql.ErrNoRows) {
 		return LoginResult{}, fmt.Errorf("oauth login: find identity: %w", err)
@@ -118,13 +118,13 @@ func (s *Service) LoginWithIdentity(ctx context.Context, in OAuthLogin) (LoginRe
 	}, nil
 }
 
-func (s *Service) sessionFor(ctx context.Context, q *database.Queries, user database.User) (LoginResult, error) {
+func (s *Service) sessionFor(ctx context.Context, user database.User) (LoginResult, error) {
 	accessToken, err := s.jwt.IssueAccessToken(user)
 	if err != nil {
 		return LoginResult{}, fmt.Errorf("oauth login: issue token: %w", err)
 	}
 
-	refreshToken, err := s.IssueSession(ctx, q, user.ID)
+	refreshToken, err := s.IssueSession(ctx, s.db.Queries, user.ID)
 	if err != nil {
 		return LoginResult{}, fmt.Errorf("oauth login: store session: %w", err)
 	}
